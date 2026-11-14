@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#06000d">
+<title>Любимке 💜</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#06000d;
+    --purple:#b14cff;
+    --purple-glow:#e0aaff;
+    --pink:#ff5ec4;
+    --border:rgba(199,125,255,.35);
+    --card-w:92px;
+    --card-h:118px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{
+    background:var(--bg);color:#f3e9ff;
+    font-family:'Manrope',sans-serif;
+    min-height:100vh;overflow:hidden;
+    touch-action:manipulation;
+  }
+
+  .aurora{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(90px)}
+  .aurora.a1{width:90vw;height:90vw;left:-30vw;top:-30vw;
+    background:radial-gradient(circle,rgba(177,76,255,.55),transparent 70%);
+    animation:driftA 26s ease-in-out infinite alternate}
+  .aurora.a2{width:100vw;height:100vw;right:-35vw;bottom:-40vw;
+    background:radial-gradient(circle,rgba(255,94,196,.42),transparent 70%);
+    animation:driftB 32s ease-in-out infinite alternate}
+  @keyframes driftA{from{transform:translate(0,0)}to{transform:translate(12vw,10vw)}}
+  @keyframes driftB{from{transform:translate(0,0)}to{transform:translate(-12vw,-8vw)}}
+
+  .stars{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+  .star{position:absolute;width:2px;height:2px;border-radius:50%;
+    background:#e0aaff;box-shadow:0 0 6px 1px rgba(199,125,255,.8);
+    animation:twinkle var(--dur,4s) ease-in-out infinite;
+    animation-delay:var(--delay,0s)}
+  @keyframes twinkle{0%,100%{opacity:.15;transform:scale(.7)}50%{opacity:1;transform:scale(1.5)}}
+
+  .bg-photos{position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+  .bg-photo{position:absolute;top:0;border-radius:14px;overflow:hidden;
+    border:1px solid rgba(199,125,255,.55);
+    box-shadow:0 0 22px rgba(177,76,255,.4),inset 0 0 12px rgba(177,76,255,.2);
+    animation:floatUp linear infinite;will-change:transform;
+    background:linear-gradient(135deg,#2a0a4a,#12002a 55%,#0a0018)}
+  .bg-photo img{width:100%;height:100%;object-fit:cover;display:block}
+  @keyframes floatUp{0%{transform:translateY(115vh) rotate(0deg)}100%{transform:translateY(-45vh) rotate(var(--rot,25deg))}}
+
+  .particles{position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+  .particle{position:absolute;bottom:-20px;opacity:0;animation:riseUp linear infinite}
+  @keyframes riseUp{0%{opacity:0;transform:translateY(0) scale(.8)}10%{opacity:.7}90%{opacity:.25}100%{opacity:0;transform:translateY(-105vh) scale(1.1)}}
+
+  .wrap{
+    position:relative;z-index:5;min-height:100vh;min-height:100dvh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:30px 20px;gap:22px;
+  }
+  h1{
+    font-family:'Unbounded',sans-serif;font-weight:800;
+    font-size:clamp(42px,13vw,74px);line-height:1;letter-spacing:-.02em;
+    color:#fff;
+    text-shadow:0 0 4px #fff,0 0 12px var(--purple-glow),0 0 28px var(--purple),0 0 55px var(--purple),0 0 90px rgba(177,76,255,.7);
+    animation:flicker 6s infinite;
+  }
+  @keyframes flicker{0%,20%,22%,55%,57%,100%{opacity:1}21%,56%{opacity:.82}}
+
+  .heart{font-size:30px;line-height:1;filter:drop-shadow(0 0 12px var(--purple));
+    animation:beat 1.8s ease-in-out infinite}
+  @keyframes beat{0%,100%{transform:scale(1)}25%{transform:scale(1.18)}45%{transform:scale(.96)}}
+
+  .reel-container{
+    position:relative;width:100%;max-width:420px;height:150px;
+    border-radius:18px;overflow:hidden;
+    background:linear-gradient(180deg,rgba(177,76,255,.12),rgba(177,76,255,.02));
+    border:1px solid var(--border);
+    box-shadow:inset 0 0 40px rgba(177,76,255,.15),0 20px 50px -25px rgba(177,76,255,.7);
+    cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:manipulation;
+  }
+  .reel-container::before,.reel-container::after{
+    content:"";position:absolute;top:0;bottom:0;width:60px;z-index:3;pointer-events:none;
+  }
+  .reel-container::before{left:0;background:linear-gradient(90deg,rgba(6,0,13,.98),transparent)}
+  .reel-container::after{right:0;background:linear-gradient(270deg,rgba(6,0,13,.98),transparent)}
+
+  .reel-marker{
+    position:absolute;left:50%;top:6px;bottom:6px;width:2px;z-index:4;
+    transform:translateX(-50%);
+    background:linear-gradient(transparent,var(--purple-glow) 30%,var(--purple-glow) 70%,transparent);
+    box-shadow:0 0 10px var(--purple),0 0 22px var(--purple);border-radius:2px;pointer-events:none;
+  }
+  .reel-marker::before,.reel-marker::after{
+    content:"";position:absolute;left:50%;transform:translateX(-50%);
+    border:5px solid transparent;
+  }
+  .reel-marker::before{top:-6px;border-top-color:var(--purple-glow);filter:drop-shadow(0 0 6px var(--purple))}
+  .reel-marker::after{bottom:-6px;border-bottom-color:var(--purple-glow);filter:drop-shadow(0 0 6px var(--purple))}
+
+  .reel-track{position:absolute;top:0;left:0;height:100%;display:flex;align-items:center;will-change:transform}
+
+  .reel-card{
+    flex:0 0 calc(var(--card-w) - 12px);height:var(--card-h);
+    margin:0 6px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,rgba(177,76,255,.28),rgba(177,76,255,.06));
+    border:1px solid var(--border);overflow:hidden;position:relative;
+    font-family:'Unbounded',sans-serif;font-weight:600;font-size:11px;
+    color:#e9d5ff;text-align:center;text-shadow:0 0 8px rgba(177,76,255,.7);
+    transition:box-shadow .25s,border-color .25s;
+    padding:6px;line-height:1.15;word-break:break-word;flex-shrink:0;
+  }
+  .reel-card.winner{
+    border-color:var(--purple-glow);
+    box-shadow:0 0 22px var(--purple),inset 0 0 15px rgba(199,125,255,.45);
+    background:linear-gradient(135deg,rgba(199,125,255,.4),rgba(177,76,255,.1));
+  }
+
+  .hint{
+    font-family:'Manrope',sans-serif;font-size:12px;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--purple-glow);opacity:.7;animation:pulseHint 2.2s ease-in-out infinite;
+  }
+  @keyframes pulseHint{0%,100%{opacity:.4}50%{opacity:.9}}
+
+  .popup{
+    position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
+    padding:20px;background:rgba(6,0,13,.85);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    opacity:0;pointer-events:none;transition:opacity .35s ease;
+  }
+  .popup.show{opacity:1;pointer-events:auto}
+
+  .popup-content{
+    position:relative;width:100%;max-width:340px;border-radius:24px;overflow:hidden;
+    background:linear-gradient(180deg,#16002a,#0b0018);border:1px solid var(--border);
+    box-shadow:0 0 40px rgba(177,76,255,.55),0 0 100px rgba(177,76,255,.25),inset 0 0 30px rgba(177,76,255,.15);
+    transform:scale(.88) translateY(20px);transition:transform .45s cubic-bezier(.2,.7,.3,1.2);
+  }
+  .popup.show .popup-content{transform:scale(1) translateY(0)}
+
+  .popup-photo{position:relative;aspect-ratio:1/1;
+    background:linear-gradient(135deg,#2a0a4a,#12002a 55%,#0a0018);overflow:hidden}
+  .popup-photo img{width:100%;height:100%;object-fit:cover;display:block}
+  .popup-photo::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(transparent 60%,rgba(11,0,24,.9));pointer-events:none;
+  }
+
+  .popup-text{
+    padding:18px 22px 22px;font-family:'Unbounded',sans-serif;font-weight:600;
+    font-size:clamp(20px,5.5vw,24px);line-height:1.3;text-align:center;color:#fff;
+    text-shadow:0 0 14px var(--purple-glow),0 0 32px rgba(177,76,255,.6);
+    letter-spacing:.02em;
+  }
+
+  .popup-close{
+    position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;
+    background:rgba(0,0,0,.5);border:1px solid rgba(199,125,255,.4);
+    color:#e0aaff;font-size:20px;line-height:1;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;z-index:5;transition:transform .15s,background .15s;
+  }
+  .popup-close:active{transform:scale(.9);background:rgba(177,76,255,.3)}
+
+  @keyframes heartFloat{0%{opacity:0;transform:translate(0,0) scale(.5)}20%{opacity:1}100%{opacity:0;transform:translate(var(--drift,0),-150px) scale(1.1)}}
+
+  .overlay{
+    position:fixed;inset:0;z-index:200;
+    display:flex;align-items:center;justify-content:center;
+    padding:16px;background:rgba(6,0,13,.94);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    opacity:1;transition:opacity .4s;overflow-y:auto;
+  }
+  .overlay.hide{opacity:0;pointer-events:none}
+
+  .picker{
+    width:100%;max-width:440px;padding:26px 22px;border-radius:24px;
+    background:linear-gradient(180deg,#16002a,#0b0018);border:1px solid var(--border);
+    box-shadow:0 0 40px rgba(177,76,255,.5),inset 0 0 30px rgba(177,76,255,.12);
+    text-align:center;margin:auto;
+  }
+  .picker-emoji{font-size:42px;margin-bottom:10px;filter:drop-shadow(0 0 16px var(--purple));
+    animation:beat 1.8s ease-in-out infinite}
+  .picker h2{
+    font-family:'Unbounded',sans-serif;font-weight:600;font-size:19px;
+    margin-bottom:10px;color:#fff;text-shadow:0 0 14px var(--purple);
+  }
+  .picker p{font-size:14px;color:#c7a9e6;line-height:1.5;margin-bottom:18px}
+
+  .pick-btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    width:100%;padding:16px 24px;margin-bottom:10px;
+    font-family:'Unbounded',sans-serif;font-weight:600;font-size:15px;
+    color:#0a0018;border:none;border-radius:14px;cursor:pointer;
+    background:linear-gradient(135deg,var(--purple-glow),var(--purple));
+    box-shadow:0 0 26px rgba(177,76,255,.7),inset 0 -3px 0 rgba(0,0,0,.15);
+    transition:transform .15s;
+  }
+  .pick-btn:active{transform:scale(.97)}
+
+  .preview{
+    display:flex;flex-wrap:wrap;gap:6px;justify-content:center;
+    margin:14px 0;max-height:150px;overflow-y:auto;
+  }
+  .preview img{
+    width:52px;height:52px;object-fit:cover;
+    border-radius:10px;border:1px solid rgba(199,125,255,.5);
+    box-shadow:0 0 10px rgba(177,76,255,.3);
+  }
+
+  .start-btn{
+    width:100%;margin-top:6px;padding:16px 30px;
+    font-family:'Unbounded',sans-serif;font-weight:600;font-size:15px;
+    color:#0a0018;border:none;border-radius:14px;cursor:pointer;
+    background:linear-gradient(135deg,var(--purple-glow),var(--purple));
+    box-shadow:0 0 26px rgba(177,76,255,.7),inset 0 -3px 0 rgba(0,0,0,.15);
+    transition:transform .15s,opacity .25s;
+    opacity:.35;pointer-events:none;
+  }
+  .start-btn.ready{opacity:1;pointer-events:auto}
+  .start-btn:active{transform:scale(.97)}
+
+  .debug{
+    margin-top:20px;padding:12px;border-radius:12px;
+    background:rgba(0,0,0,.3);border:1px solid rgba(199,125,255,.2);
+    font-size:11px;color:#a48dc2;text-align:left;
+  }
+  .debug summary{cursor:pointer;color:#c7a9e6;font-weight:600;outline:none}
+  .debug[open] summary{margin-bottom:8px}
+  .debug code{
+    background:rgba(177,76,255,.15);padding:2px 5px;border-radius:4px;
+    color:#e0aaff;font-size:10px;word-break:break-all;
+  }
+  .debug .line{margin-bottom:4px;line-height:1.5}
+  .debug .ok{color:#6ee76e}
+  .debug .fail{color:#ff6e8c}
+
+  @media (min-width: 768px) {
+    :root{--card-w:116px;--card-h:150px}
+    .wrap{gap:28px;padding:40px}
+    h1{font-size:clamp(72px,8vw,110px)}
+    .heart{font-size:40px}
+    .reel-container{max-width:560px;height:190px}
+    .reel-card{font-size:13px;padding:8px}
+    .popup-content{max-width:420px}
+    .picker{max-width:520px}
+  }
+</style>
+</head>
+<body>
+
+<div class="aurora a1"></div>
+<div class="aurora a2"></div>
+<div class="stars" id="stars"></div>
+<div class="bg-photos" id="bgPhotos"></div>
+<div class="particles" id="particles"></div>
+
+<main class="wrap">
+  <h1>Любимке</h1>
+  <div class="heart">💜</div>
+
+  <div class="reel-container" id="reelContainer">
+    <div class="reel-marker"></div>
+    <div class="reel-track" id="reelTrack"></div>
+  </div>
+
+  <div class="hint">тапни, чтобы крутить</div>
+</main>
+
+<div class="popup" id="popup">
+  <div class="popup-content">
+    <div class="popup-close" id="popupClose">×</div>
+    <div class="popup-photo"><img id="popupImg" alt=""></div>
+    <div class="popup-text" id="popupText"></div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" style="display:none">
+  <div class="picker">
+    <div class="picker-emoji">💜</div>
+    <h2>Выбери её фотографии</h2>
+    <p>Фото не нашлись рядом с файлом автоматически.<br>Выбери до 17 штук — и всё заработает.</p>
+
+    <input type="file" id="fileInput" accept="image/*" multiple hidden>
+    <button class="pick-btn" id="pickBtn">📁 Выбрать фотографии</button>
+
+    <div class="preview" id="preview"></div>
+
+    <button class="start-btn" id="startBtn">Начать 💜</button>
+
+    <details class="debug">
+      <summary>Почему не нашлись?</summary>
+      <div class="debug-body">
+        <div class="line">Страница: <code id="debugUrl">…</code></div>
+        <div class="line">Искал:</div>
+        <div id="debugTried" style="font-size:10px;line-height:1.6"></div>
+        <div class="line" style="margin-top:8px">💡 Убедись что <code>photo1.png</code> … <code>photo17.png</code> лежат <b>в одной папке</b> с <code>index.html</code>.</div>
+      </div>
+    </details>
+  </div>
+</div>
+
+<script>
+  /* ============================================================
+     КОМПЛИМЕНТЫ
+     ============================================================ */
+  const WORDS = [
+    'любимая','родная','единственная','желанная','обожаемая',
+    'дорогая','близкая','своя','ненаглядная','драгоценная',
+    'милая','нежная','ласковая','тёплая','уютная',
+    'заботливая','чуткая','добрая','искренняя','верная',
+    'надёжная','умная','красивая','обаятельная','привлекательная',
+    'очаровательная','восхитительная','потрясающая','удивительная','неповторимая',
+    'особенная','настоящая','весёлая','красавица','умница',
+    'солнышко','сладкая','любимка','золотко','ангел',
+    'светлая','милашка','счастье','лапушка','прелесть',
+    'солнце','свет','радость','мечта','улыбка',
+    'тепло','красота','нежность','любовь моя','душа компании',
+    'муза','королева','принцесса','богиня','котик',
+    'зайка','котёнок','бусинка','малышка','девочка моя',
+    'самая лучшая','самая красивая','самая нежная','самая родная','самая милая',
+    'самая любимая','самая самая','моя половинка','моя вселенная','моё всё',
+    'моё счастье','моя жизнь','моя любовь','моя мечта','моя радость',
+    'вдохновение','смысл жизни','жизнь моя','судьба моя','сердце моё',
+    'душа моя','лучшая на свете','неотразимая','роднулька','любимая моя',
+    'любимая девочка','моя','прекрасная','моё вдохновение','моя нежность'
+  ];
+
+  /* ============================================================
+     ФОТО-КОЛОДА С КУЛДАУНОМ
+     Гарантирует:
+       1) Одно фото не повторится, пока не выйдут все из колоды
+       2) Даже на стыке колод не будет 3 одинаковых подряд
+     ============================================================ */
+  class PhotoBag {
+    constructor(items) {
+      this.items = [...items];
+      this.deck = [];
+      this.recent = []; // 2 последних — чтобы не было 3-в-ряд
+    }
+    _shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+    _refill() {
+      let deck = this._shuffle(this.items);
+      // защита от 3-в-ряд на стыке колод
+      if (this.recent.length >= 2 && deck.length >= 3) {
+        for (let attempt = 0; attempt < 50; attempt++) {
+          const first = deck[0];
+          const last  = this.recent[1];
+          const prev  = this.recent[0];
+          if (!(first === last && first === prev)) break;
+          const pos = 1 + Math.floor(Math.random() * (deck.length - 1));
+          [deck[0], deck[pos]] = [deck[pos], deck[0]];
+        }
+      }
+      this.deck = deck;
+    }
+    next() {
+      if (!this.items.length) return null;
+      if (this.deck.length === 0) this._refill();
+      const item = this.deck.shift();
+      this.recent.push(item);
+      if (this.recent.length > 2) this.recent.shift();
+      return item;
+    }
+  }
+
+  /* ============================================================
+     СОСТОЯНИЕ
+     ============================================================ */
+  let photoSources = [];
+  let PHOTO_COUNT = 0;
+  const PHOTO_MAX = 17;
+
+  let bgBag = null;   // колода для фона
+  let popBag = null;  // колода для попапа
+
+  const overlay   = document.getElementById('overlay');
+  const fileInput = document.getElementById('fileInput');
+  const pickBtn   = document.getElementById('pickBtn');
+  const preview   = document.getElementById('preview');
+  const startBtn  = document.getElementById('startBtn');
+
+  function initBags() {
+    if (!photoSources.length) return;
+    bgBag  = new PhotoBag(photoSources);
+    popBag = new PhotoBag(photoSources);
+  }
+
+  function nextBgPhoto()  { return bgBag  ? bgBag.next()  : null; }
+  function nextPopPhoto() { return popBag ? popBag.next() : null; }
+
+  function compressImage(dataUrl, maxSize = 900, quality = 0.85) {
+    return new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.width, h = img.height;
+        if (w > h && w > maxSize) { h = h * maxSize / w; w = maxSize; }
+        else if (h > maxSize) { w = w * maxSize / h; h = maxSize; }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = () => resolve(dataUrl);
+      img.src = dataUrl;
+    });
+  }
+
+  /* ============================================================
+     ФОНОВЫЕ ЭФФЕКТЫ
+     ============================================================ */
+  function initBackgroundEffects() {
+    const starsBox = document.getElementById('stars');
+    for (let i = 0; i < 90; i++) {
+      const s = document.createElement('span');
+      s.className = 'star';
+      s.style.left = Math.random() * 100 + 'vw';
+      s.style.top = Math.random() * 100 + 'vh';
+      s.style.setProperty('--dur', (3 + Math.random() * 5) + 's');
+      s.style.setProperty('--delay', (Math.random() * 5) + 's');
+      if (Math.random() > .75) { s.style.width = '3px'; s.style.height = '3px'; }
+      starsBox.appendChild(s);
+    }
+
+    const particlesBox = document.getElementById('particles');
+    const chars = ['✦','·','✧','•','◆','✶'];
+    for (let i = 0; i < 40; i++) {
+      const p = document.createElement('span');
+      p.className = 'particle';
+      p.textContent = chars[Math.floor(Math.random() * chars.length)];
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.color = Math.random() > .5 ? '#c77dff' : '#e0aaff';
+      p.style.fontSize = (8 + Math.random() * 12) + 'px';
+      p.style.animationDuration = (12 + Math.random() * 18) + 's';
+      p.style.animationDelay = '-' + (Math.random() * 30) + 's';
+      p.style.filter = 'drop-shadow(0 0 4px currentColor)';
+      particlesBox.appendChild(p);
+    }
+  }
+
+  /* ---------- фон: дорожки + PhotoBag ---------- */
+  function buildBgPhotos() {
+    const bgPhotos = document.getElementById('bgPhotos');
+    bgPhotos.innerHTML = '';
+    if (!PHOTO_COUNT) return;
+
+    const vw = window.innerWidth;
+    const LANES = vw < 640 ? 4 : 6;
+    const PER_LANE = 6;
+    const laneW = vw / LANES;
+    const photoW = laneW * 0.8;
+    const photoH = photoW * 1.3;
+
+    // Колода на все дорожки — гарантия разнообразия глобально
+    const bag = new PhotoBag(photoSources);
+
+    for (let lane = 0; lane < LANES; lane++) {
+      const cycle = 20 + Math.random() * 12;
+      const baseDepth = 0.35 + Math.random() * 0.6;
+
+      for (let i = 0; i < PER_LANE; i++) {
+        // небольшая вариация глубины внутри дорожки — фон «объёмнее»
+        const depth = Math.max(0.15, Math.min(1, baseDepth + (Math.random() - 0.5) * 0.25));
+        const blur = (1 - depth) * 1.5;
+        const opacity = 0.5 + depth * 0.4;
+        const sizeJitter = 0.92 + Math.random() * 0.16; // ±8% размера
+
+        const w = photoW * sizeJitter;
+        const h = w * 1.3;
+        const rot = (Math.random() > .5 ? 1 : -1) * (18 + Math.random() * 40);
+
+        const wrap = document.createElement('div');
+        wrap.className = 'bg-photo';
+        wrap.style.left = (lane * laneW + (laneW - w) / 2) + 'px';
+        wrap.style.width = w + 'px';
+        wrap.style.height = h + 'px';
+        wrap.style.filter = `blur(${blur}px)`;
+        wrap.style.opacity = opacity;
+        wrap.style.setProperty('--rot', rot + 'deg');
+        wrap.style.animationDuration = cycle + 's';
+        wrap.style.animationDelay = '-' + ((cycle / PER_LANE) * i) + 's';
+
+        const src = bag.next();
+        if (!src) continue;
+        const img = document.createElement('img');
+        img.alt = ''; img.src = src;
+        wrap.appendChild(img);
+        bgPhotos.appendChild(wrap);
+      }
+    }
+  }
+
+  /* ============================================================
+     РУЛЕТКА (только комплименты)
+     ============================================================ */
+  let reelBuilt = false;
+  let pool = [];
+  let N = 0;
+  let CARD_W = 92;
+  let currentIdx = 0;
+  let spinning = false;
+  let cards = [];
+  let track, container;
+
+  function buildReel() {
+    if (reelBuilt) return;
+    reelBuilt = true;
+
+    container = document.getElementById('reelContainer');
+    track     = document.getElementById('reelTrack');
+
+    const testCard = document.createElement('div');
+    testCard.className = 'reel-card';
+    track.appendChild(testCard);
+    const cs = getComputedStyle(testCard);
+    CARD_W = testCard.getBoundingClientRect().width
+           + parseFloat(cs.marginLeft)
+           + parseFloat(cs.marginRight);
+    testCard.remove();
+
+    pool = [...WORDS];
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    N = pool.length;
+
+    const COPIES = 3;
+    for (let copy = 0; copy < COPIES; copy++) {
+      pool.forEach(word => {
+        const card = document.createElement('div');
+        card.className = 'reel-card';
+        card.textContent = word;
+        track.appendChild(card);
+      });
+    }
+    cards = track.querySelectorAll('.reel-card');
+
+    currentIdx = N;
+    setX(getX(currentIdx));
+    highlight(currentIdx);
+
+    container.addEventListener('click', spin);
+  }
+
+  function getX(idx) {
+    return container.clientWidth / 2 - idx * CARD_W - CARD_W / 2;
+  }
+  function setX(x) { track.style.transform = `translateX(${x}px)`; }
+
+  function highlight(idx) {
+    cards.forEach(c => c.classList.remove('winner'));
+    if (cards[idx]) cards[idx].classList.add('winner');
+  }
+  function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  function spin() {
+    if (spinning) return;
+    spinning = true;
+
+    const targetInPool = Math.floor(Math.random() * N);
+    const targetIdx = N + targetInPool;
+    const startX = getX(currentIdx);
+    const targetX = getX(targetIdx);
+    const duration = 4200;
+    const t0 = performance.now();
+
+    function frame(now) {
+      const p = Math.min(1, (now - t0) / duration);
+      const eased = 1 - Math.pow(1 - p, 4);
+      setX(startX + (targetX - startX) * eased);
+      if (p < 1) requestAnimationFrame(frame);
+      else { setX(targetX); finishSpin(targetIdx, targetInPool); }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function finishSpin(targetIdx, targetInPool) {
+    highlight(targetIdx);
+    const word = pool[targetInPool];
+    const popup = document.getElementById('popup');
+    const popupImg = document.getElementById('popupImg');
+    const popupText = document.getElementById('popupText');
+
+    const src = nextPopPhoto();
+    if (src) {
+      popupImg.src = src;
+      popupImg.style.display = '';
+    }
+    popupText.textContent = capitalize(word);
+
+    popup.classList.add('show');
+    spawnHearts(container);
+    if (navigator.vibrate) navigator.vibrate(15);
+
+    setTimeout(() => {
+      currentIdx = targetInPool;
+      setX(getX(currentIdx));
+      highlight(currentIdx);
+      spinning = false;
+    }, 150);
+  }
+
+  function spawnHearts(anchor) {
+    const rect = anchor.getBoundingClientRect();
+    const emojis = ['💜','💖','✨','🤍','💫'];
+    for (let i = 0; i < 8; i++) {
+      const h = document.createElement('span');
+      h.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      const t = (i + 0.5) / 8;
+      const baseX = rect.left + rect.width * t;
+      h.style.cssText = `
+        position:fixed;left:${baseX + (Math.random() - .5) * 24}px;
+        top:${rect.top + Math.random() * 20}px;
+        font-size:${14 + Math.random() * 12}px;
+        pointer-events:none;z-index:9999;
+        animation:heartFloat ${2 + Math.random() * .8}s cubic-bezier(.25,.6,.3,1) forwards;
+        animation-delay:${i * .06}s;--drift:${(Math.random() - .5) * 60}px;
+      `;
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 3500);
+    }
+  }
+
+  document.getElementById('popupClose').addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('popup').classList.remove('show');
+  });
+  document.getElementById('popup').addEventListener('click', (e) => {
+    if (e.target.id === 'popup') e.currentTarget.classList.remove('show');
+  });
+
+  /* ============================================================
+     ПИКЕР
+     ============================================================ */
+  pickBtn.addEventListener('click', () => fileInput.click());
+
+  fileInput.addEventListener('change', async (e) => {
+    const files = Array.from(e.target.files).slice(0, PHOTO_MAX);
+    if (!files.length) return;
+
+    photoSources = [];
+    preview.innerHTML = '';
+    startBtn.classList.remove('ready');
+    pickBtn.textContent = '⏳ Загружаю…';
+    pickBtn.disabled = true;
+
+    for (const file of files) {
+      if (!file.type.startsWith('image/')) continue;
+      const raw = await new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.readAsDataURL(file);
+      });
+      const compressed = await compressImage(raw);
+      photoSources.push(compressed);
+      const thumb = document.createElement('img');
+      thumb.src = compressed;
+      preview.appendChild(thumb);
+    }
+
+    PHOTO_COUNT = photoSources.length;
+    pickBtn.textContent = '📁 Выбрать заново';
+    pickBtn.disabled = false;
+    if (PHOTO_COUNT > 0) startBtn.classList.add('ready');
+  });
+
+  startBtn.addEventListener('click', () => {
+    if (!PHOTO_COUNT) return;
+    overlay.classList.add('hide');
+    setTimeout(() => { overlay.style.display = 'none'; }, 400);
+    initBags();
+    buildBgPhotos();
+    buildReel();
+  });
+
+  /* ============================================================
+     АВТОПОИСК
+     ============================================================ */
+  function tryLoad(url) {
+    return new Promise(resolve => {
+      const img = new Image();
+      img.onload  = () => resolve(true);
+      img.onerror = () => resolve(false);
+      img.src = url;
+    });
+  }
+
+  async function autoDetect() {
+    const debugTried = document.getElementById('debugTried');
+    const EXTS = ['png', 'PNG', 'jpg', 'jpeg', 'JPG', 'JPEG', 'webp', 'WEBP'];
+    let foundExt = null;
+
+    for (const ext of EXTS) {
+      const url = `photo1.${ext}`;
+      const ok = await tryLoad(url);
+      if (debugTried) {
+        debugTried.innerHTML += `<div>• <code>photo1.${ext}</code> <span class="${ok ? 'ok' : 'fail'}">${ok ? '✓' : '✗'}</span></div>`;
+      }
+      if (ok) { foundExt = ext; break; }
+    }
+    if (!foundExt) return false;
+
+    const urls = [];
+    for (let i = 1; i <= PHOTO_MAX; i++) urls.push(`photo${i}.${foundExt}`);
+
+    const results = await Promise.all(urls.map(u => tryLoad(u).then(ok => ok ? u : null)));
+    photoSources = results.filter(Boolean);
+
+    if (debugTried) {
+      debugTried.innerHTML += `<div style="margin-top:6px">• Найдено: <b>${photoSources.length}/${PHOTO_MAX}</b> фото</div>`;
+    }
+    return photoSources.length > 0;
+  }
+
+  async function init() {
+    initBackgroundEffects();
+    document.getElementById('debugUrl').textContent = window.location.href;
+
+    const timeout = new Promise(resolve => setTimeout(() => resolve('timeout'), 2200));
+    const detect = autoDetect();
+    const result = await Promise.race([detect, timeout]);
+
+    if (result === true && photoSources.length > 0) {
+      PHOTO_COUNT = photoSources.length;
+      initBags();
+      buildBgPhotos();
+      buildReel();
+      return;
+    }
+
+    overlay.style.display = 'flex';
+
+    detect.then(ok => {
+      if (ok && photoSources.length > 0 && !reelBuilt) {
+        PHOTO_COUNT = photoSources.length;
+        overlay.style.display = 'none';
+        initBags();
+        buildBgPhotos();
+        buildReel();
+      }
+    });
+  }
+
+  window.addEventListener('load', init);
+</script>
+</body>
+</html>
